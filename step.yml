@@ -1,0 +1,34 @@
+name: ftp-scoped-deploy
+version: 0.0.1
+summary: Sync your FTP files using remote list for files md5sum's and comparing with local md5sum.
+category: imported
+tags:
+- ftp
+- diff
+- md5sum
+- output
+properties:
+- name: timeout
+  type: string
+  required: false
+  default: ""
+- name: remote-file
+  type: string
+  required: false
+  default: ""
+- name: password
+  type: string
+  required: true
+  default: ""
+- name: username
+  type: string
+  required: true
+  default: ""
+- name: destination
+  type: string
+  required: true
+  default: ""
+- name: include
+  type: string
+  required: false
+  default: "."
