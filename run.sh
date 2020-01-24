@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # TODO if destination url does not exist, maybe we should create it
-# TODO filenames with space
 
 # curl adding is done with --ftp-create-dirs -T "$file_name" 
 # curl removing is done with -Q "-DELE $file_name" 
@@ -21,7 +20,7 @@ if [ ! -n "$WERCKER_FTP_DEPLOY_PASSWORD" ]
 then
     fail "missing option \"password\", aborting"
 fi
-if [ ! -n "$WERCKER_FTP_DEPLOY_SOURCE" ]
+if [ ! -n "$WERCKER_FTP_DEPLOY_INCLUDE" ]
 then
     fail "missing option \"include\", aborting"
 fi
@@ -30,8 +29,8 @@ DESTINATION=$WERCKER_FTP_DEPLOY_DESTINATION
 USERNAME=$WERCKER_FTP_DEPLOY_USERNAME
 PASSWORD=$WERCKER_FTP_DEPLOY_PASSWORD
 REMOTE_FILE=$WERCKER_FTP_DEPLOY_REMOTE_FILE
-INCLUDE_DIR=$WERCKER_FTP_DEPLOY_SOURCE
-EXECUTING_DIR=$(pwd)
+INCLUDE_DIR=$WERCKER_FTP_DEPLOY_INCLUDE
+PWD=$(pwd)
 
 if [ ! -n "$WERCKER_FTP_DEPLOY_REMOTE_FILE" ]
 then
@@ -54,7 +53,7 @@ echo "curl -u $USERNAME:do_not_show_PASSWORD_in_log $DESTINATION/"
 curl -u $USERNAME:$PASSWORD $DESTINATION/
 
 debug "Calculating md5sum for local files" 
-cd $INCLUDE_DIR
+cd $WERCKER_FTP_DEPLOY_INCLUDE
 find . -type f -exec md5sum {} > $WERCKER_CACHE_DIR/local.txt \;
 sort -k 2 -u $WERCKER_CACHE_DIR/local.txt -o $WERCKER_CACHE_DIR/local.txt > /dev/null
 
@@ -86,7 +85,7 @@ wc -l < $WERCKER_CACHE_DIR/changed.txt
 
 
 debug "Start uploading new files"
-while read file_name; do
+while read -r file_name; do
   if [ !  -n "$file_name" ];
   then
     fail "$file_name should exists"
@@ -103,7 +102,7 @@ while read file_name; do
 done < $WERCKER_CACHE_DIR/new.txt
 
 debug "Start uploading changed files"
-while read file_name; do
+while read -r file_name; do
   if [ !  -n "$file_name" ];
   then
     fail "$file_name should exists"
@@ -128,8 +127,8 @@ while read file_name; do
   curl -u $USERNAME:$PASSWORD --ftp-create-dirs -T "$WERCKER_CACHE_DIR/remote.txt" "$DESTINATION/$REMOTE_FILE" || fail "failed to push $REMOTE_FILE. It is not in sync anymore. Please remove all files from $DESTINATION and start again"
 done < $WERCKER_CACHE_DIR/removed.txt
 
-debug "Changing back to pwd"
-cd $EXECUTING_DIR
+debug "Changing back to root"
+cd $PWD
 
 success "Done."
 

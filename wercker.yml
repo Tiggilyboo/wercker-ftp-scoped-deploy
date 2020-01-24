@@ -1,11 +1,14 @@
-box: debian:stable-slim 
+box: debian
 build:
   steps:
-    - spellcheck
-
-    - internal/publish-step:
-      owner: tiggilyboo
-
+    - shellcheck:
+        files: run.sh
     - script:
-      name: prepare output
-      code: cp "README.md" "run.sh" "wercker.yml", "step.yml" "$WERCKER_OUTPUT_DIR"
+        name: 'prepare output'
+        code: 'rm -rf $WERCKER_ROOT/.git'
+publish:
+  steps:
+    - install-packages:
+        packages: ca-certificates
+    - internal/publish-step:
+        owner: tiggilyboo
