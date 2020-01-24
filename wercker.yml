@@ -1,4 +1,8 @@
 box: wercker/default
-build:
+publish:
   steps:
-    - validate-wercker-step
+    - install-packages:
+    packages: ca-certificates
+
+    - internal/publish-step:
+    owner: tiggilyboo
