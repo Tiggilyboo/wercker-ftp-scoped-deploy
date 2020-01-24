@@ -1,7 +1,6 @@
-box: node:stable-slim
+box: debian:stable-slim 
 build:
   steps:
-    - validate-wercker-step
 publish:
   steps:
     - internal/publish-step:
