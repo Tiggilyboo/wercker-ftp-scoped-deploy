@@ -1,8 +1,5 @@
 box: wercker/default
 publish:
   steps:
-    - install-packages:
-    packages: ca-certificates
-
     - internal/publish-step:
-    owner: tiggilyboo
+      owner: tiggilyboo
