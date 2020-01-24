@@ -1,4 +1,4 @@
-box: debian:stable-slim
+box: node:stable-slim
 build:
   steps:
     - validate-wercker-step
