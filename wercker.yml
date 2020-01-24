@@ -1,7 +1,11 @@
 box: debian:stable-slim 
 build:
   steps:
-publish:
-  steps:
+    - spellcheck
+
     - internal/publish-step:
       owner: tiggilyboo
+
+    - script:
+      name: prepare output
+      code: cp "README.md" "run.sh" "wercker.yml", "step.yml" "$WERCKER_OUTPUT_DIR"
